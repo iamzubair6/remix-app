@@ -18,7 +18,14 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
   if (!contact) {
     throw new Response("Not Found", { status: 404 });
   }
-  return json({ contact });
+  return json(
+    { contact },
+    {
+      headers: {
+        "Cache-Control": "no-store",
+      },
+    }
+  );
 };
 
 export default function EditContact() {
