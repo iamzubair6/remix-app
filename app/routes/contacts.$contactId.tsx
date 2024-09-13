@@ -1,18 +1,30 @@
-import { Form } from "@remix-run/react";
+import type { LoaderFunctionArgs } from "@remix-run/node";
+import { json } from "@remix-run/node";
+import { Form, useLoaderData } from "@remix-run/react";
 import type { FunctionComponent } from "react";
-
+import invariant from "tiny-invariant";
 import type { ContactRecord } from "../data";
+import { getContact } from "../data";
 
+export const loader = async ({ params }: LoaderFunctionArgs) => {
+  invariant(params.contactId, "No contactId provided");
+  const contact = await getContact(params.contactId);
+  if (!contact) {
+    throw new Response("Not Found", { status: 404 });
+  }
+  return json({ contact });
+};
 export default function Contact() {
-  const contact = {
-    first: "Your",
-    last: "Name",
-    avatar:
-      "https://sessionize.com/image/c315-400o400o2-spjM5A6VVfVNnQsuwvX3DY.jpg",
-    twitter: "your_handle",
-    notes: "Some notes",
-    favorite: true,
-  };
+  const { contact } = useLoaderData<typeof loader>();
+  //   const contact = {
+  //     first: "Your",
+  //     last: "Name",
+  //     avatar:
+  //       "https://sessionize.com/image/c315-400o400o2-spjM5A6VVfVNnQsuwvX3DY.jpg",
+  //     twitter: "your_handle",
+  //     notes: "Some notes",
+  //     favorite: true,
+  //   };
 
   return (
     <div id="contact">
